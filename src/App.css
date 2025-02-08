@@ -63,10 +63,10 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #8758ff;
+  background: rgb(16, 165, 8);
   color: #fff;
   padding: 0.75rem 1rem;
-  border-radius: 5px;
+  border-radius: 10px;
   margin-bottom: 1rem;
 }
 
