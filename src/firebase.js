@@ -21,6 +21,7 @@ const app = initializeApp(firebaseConfig);
 
 // Firestore database instance
 const db = getFirestore(app);
+export { db };
 
 // Function to Add Data
 export const addTodo = async (task) => {
@@ -35,7 +36,6 @@ export const addTodo = async (task) => {
 // Function to Fetch Data
 export const getTodos = async () => {
   const querySnapshot = await getDocs(collection(db, "tasks"));
-  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  const todos = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  return todos;
 };
-
-export default db;
