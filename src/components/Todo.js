@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { getTodos } from '../firebase'//import function to fetch tasks
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -8,11 +9,27 @@ import { motion } from "framer-motion"
 export const Todo = ({task, toggleComplete, deleteTodo, editTodo}) => {
   const [isLiked, setIsLiked] = useState(false)
 
+  const [value, setValue] = useState([])
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      const todosFromDB = await getTodos() //Fetch tasks
+      setValue(todosFromDB)
+    }
+    fetchTodos()
+  }, []) 
+
+  //function for the like and dislike
   const colorTodoHeart = () => {
     setIsLiked (!isLiked)
   }
   return (
     <div className='Todo'>
+      <ul>
+        {value.map((task) => (
+          <li key={task.id}>{task.task}</li>
+        ))}
+      </ul>
       <p onClick={() => toggleComplete(task.id)} className={`${task.completed ? "completed" : ""}`}>{task.task}</p>
       <div>
         <motion.div style={{ display: "inline-block" }} whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.9 }}>  
@@ -30,3 +47,5 @@ export const Todo = ({task, toggleComplete, deleteTodo, editTodo}) => {
     </div>
   )
 }
+
+export default Todo
