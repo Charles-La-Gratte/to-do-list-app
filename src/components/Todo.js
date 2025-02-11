@@ -15,6 +15,7 @@ export const Todo = ({task, toggleComplete, deleteTodo, editTodo}) => {
     const fetchTodos = async () => {
       const todosFromDB = await getTodos() //Fetch tasks
       setValue(todosFromDB)
+      //console.log(value)
     }
     fetchTodos()
   }, []) 
@@ -25,11 +26,7 @@ export const Todo = ({task, toggleComplete, deleteTodo, editTodo}) => {
   }
   return (
     <div className='Todo'>
-      <ul>
-        {value.map((task) => (
-          <li key={task.id}>{task.task}</li>
-        ))}
-      </ul>
+      
       <p onClick={() => toggleComplete(task.id)} className={`${task.completed ? "completed" : ""}`}>{task.task}</p>
       <div>
         <motion.div style={{ display: "inline-block" }} whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.9 }}>  
@@ -48,4 +45,4 @@ export const Todo = ({task, toggleComplete, deleteTodo, editTodo}) => {
   )
 }
 
-export default Todo
+

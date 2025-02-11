@@ -23,5 +23,3 @@ export const TodoForm = () => {
     </div>
   )
 }
-
-export default TodoForm;

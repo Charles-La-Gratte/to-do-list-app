@@ -14,7 +14,7 @@ export const TodoWrapper = () => {
     useEffect(() => {
       const fetchTodos = async () => {
         try {
-          const querySnapshot = await getDocs(collection(db, 'todos'));
+          const querySnapshot = await getDocs(collection(db, 'tasks'));
           const todosFromDB = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
@@ -30,7 +30,7 @@ export const TodoWrapper = () => {
     //Add new todo to firebase
     const addTodo = async (todo) => {
       try {
-        const docRef = await addDoc(collection(db, 'todos'), {
+        const docRef = await addDoc(collection(db, 'tasks'), {
           task: todo,
           completed: false,
           isEditing: false,
@@ -43,7 +43,7 @@ export const TodoWrapper = () => {
 
     //Toggle completed state in Firebase
     const toggleComplete = async (id) => {
-      const todoRef = doc(db, 'todos', id)
+      const todoRef = doc(db, 'tasks', id)
       setTodos(
         todos.map((todo) => 
           todo.id === id ? {...todo, completed: !todo.completed} : todo
@@ -57,7 +57,7 @@ export const TodoWrapper = () => {
     //function for deleting the selected task if i click to the trash icon
     const deleteTodo = async (id) => {
       try {
-        await deleteDoc(doc(db, 'todos', id))
+        await deleteDoc(doc(db, 'tasks', id))
         setTodos(todos.filter((todo) => todo.id !== id ))
       } catch (error) {
         console.error('Error deleting task:', error)
@@ -75,7 +75,7 @@ export const TodoWrapper = () => {
 
     //Update edited task in firebase
     const editTask = async (task, id) => {
-      const todoRef = doc(db, 'todos', id)
+      const todoRef = doc(db, 'tasks', id)
       try {
         await updateDoc(todoRef, { task })
         setTodos(
