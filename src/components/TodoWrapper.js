@@ -1,10 +1,10 @@
 import React, { useEffect, useState} from 'react'
 import { TodoForm } from './TodoForm'
 import { v4 as uuidv4 } from 'uuid'
-import { Todo } from './Todo';
-import { db } from '../firebase';
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { EditTodoForm } from './EditTodoForm';
+import { Todo } from './Todo'
+import { db } from '../firebase'
+import { onSnapshot, collection, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
+import { EditTodoForm } from './EditTodoForm'
 uuidv4();
 
 export const TodoWrapper = () => {
@@ -12,19 +12,15 @@ export const TodoWrapper = () => {
 
     //fetch tasks from firebase when the component mounts
     useEffect(() => {
-      const fetchTodos = async () => {
-        try {
-          const querySnapshot = await getDocs(collection(db, 'tasks'));
-          const todosFromDB = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setTodos(todosFromDB);
-        } catch (error) {
-          console.error('Error fetching tasks:',error)
-        }
-      }
-      fetchTodos()
+      //onSnapshot is a real-time listener provided by firebase that allow the app to automatically update
+      const unsubscribe = onSnapshot(collection(db,"tasks"), (onSnapshot) => {
+        const todosFromDB = onSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setTodos(todosFromDB);
+      })
+      return () => unsubscribe() // stop listening. Update state with real-time data
     }, [])
 
     //Add new todo to firebase
@@ -34,10 +30,12 @@ export const TodoWrapper = () => {
           task: todo,
           completed: false,
           isEditing: false,
+          isLiked: false,
         });
-        setTodos([...todos, {id: docRef.id, task: todo, completed: false, isEditing: false }])
+        setTodos((prevTodos) => [...prevTodos, {id: docRef.id, task: todo, completed: false, isEditing: false, isLiked: false }])
+        console.log("Task added successfully!!!")
       } catch (error){
-        console.log(todos)
+        console.error("Error adding task:", error)
       }
     }
 
@@ -87,6 +85,19 @@ export const TodoWrapper = () => {
       }
     }
 
+    //function for the like and dislike
+      const colorTodoHeart = async (id) => {
+        const todoRef = doc(db, 'tasks', id)
+           setTodos(
+             todos.map((todo) => 
+               todo.id === id ? {...todo, isLiked: !todo.isLiked} : todo
+           )
+         )
+         await updateDoc(todoRef, {
+           isLiked: !todos.find((todo) => todo.id === id).isLiked,
+         })
+      }
+
   return (
     <div className='TodoWrapper'>
       <h1>What's your plan ?</h1>
@@ -96,7 +107,7 @@ export const TodoWrapper = () => {
             <EditTodoForm key={index} editTodo={editTask} task={todo}/>
           ) : (
             <Todo task={todo} key={index}
-            toggleComplete={toggleComplete} deleteTodo={deleteTodo} editTodo={editTodo}/>
+            toggleComplete={toggleComplete} deleteTodo={deleteTodo} editTodo={editTodo} colorTodoHeart={colorTodoHeart}/>
           )  
         ))}    
     </div>
