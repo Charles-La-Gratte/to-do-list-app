@@ -6,6 +6,7 @@ import { getFirestore, collection, addDoc, getDocs } from "@firebase/firestore";
 
 
 const firebaseConfig = {
+  /*
   apiKey: "AIzaSyCzDNbrsqkaMs6P0_o9Bmx_zJ5DWtqSm3s",
   authDomain: "todolist-e7ddb.firebaseapp.com",
   projectId: "todolist-e7ddb",
@@ -13,6 +14,14 @@ const firebaseConfig = {
   messagingSenderId: "969299007078",
   appId: "1:969299007078:web:85557fa6527a8a87ed3fa7",
   measurementId: "G-DEKLT837JJ"
+  */
+  apiKey: process.env.apiKey,
+  authDomain: process.env.authDomain,
+  projectId: process.env.projectId,
+  storageBucket: process.env.storageBucket,
+  messagingSenderId: process.env.messagingSenderId,
+  appId: process.env.appId,
+  measurementId: process.env.measurementId
 };
 
 // Initialize Firebase
